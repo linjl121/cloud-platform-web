@@ -1,0 +1,8 @@
+## 配置文件暂时不检查
+vue.config.js
+webpack.dll.config.js
+
+setting.js
+
+public/vendor/
+public/js
