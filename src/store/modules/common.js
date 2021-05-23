@@ -1,9 +1,16 @@
+import { setLocalLang } from '@/utils/storage';
 export default {
   state: {
     // token
-    token: localStorage.getItem('token') || ''
+    token: localStorage.getItem('token') || '',
+    lang: 'zh'
   },
   mutations: {
+    // 初始化用户数据
+    setLang(state, newVal) {
+      state.lang = newVal;
+      setLocalLang(newVal);
+    },
     // 初始化用户数据
     initUserData(state, newVal) {
       state.token = newVal;
