@@ -1,14 +1,23 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/home.vue';
+import Layout from '../views/layout/index.vue';
 
+const routeFiles = require.context('./modules', true, /\.js$/);
+
+const routes = routeFiles.keys().reduce((modules, modulePath) => {
+  let value = routeFiles(modulePath);
+  return value.default ? modules.concat(value.default) : modules;
+}, []);
 Vue.use(VueRouter);
 
-const routes = [
+const asyncRoutes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    redirect: '/home'
+  },
+  {
+    path: '/redirect/:path*', // 刷新路由
+    component: () => import(/* webpackChunkName: "login" */ '@/views/redirect/index.vue')
   },
   {
     path: '/about',
@@ -17,11 +26,17 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/about.vue')
+  },
+  {
+    path: '/layout',
+    name: 'layout',
+    component: Layout,
+    children: routes
   }
 ];
 
 const router = new VueRouter({
-  routes
+  routes: asyncRoutes
 });
 
 export default router;

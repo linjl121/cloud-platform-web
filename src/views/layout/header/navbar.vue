@@ -2,6 +2,7 @@
 <template>
   <div class="navbar">
     <screenfull class="padding" />
+    <lang></lang>
     <user></user>
   </div>
 </template>
@@ -9,12 +10,14 @@
 <script>
   import screenfull from './screenfull.vue';
   import user from './user.vue';
+  import lang from './lang.vue';
 
   export default {
     name: 'navbar',
     components: {
       screenfull,
-      user
+      user,
+      lang
     }
   };
 </script>

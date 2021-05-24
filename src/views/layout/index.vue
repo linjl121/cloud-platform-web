@@ -2,9 +2,9 @@
   <div class="layout-container full-screen">
     <div class="layout-container__header">
       <div class="layout-container__header--title">
-        <img src="@/assets/images/logo/logo-title.png" />
+        <img src="@/assets/images/logo.png" />
       </div>
-      <navbar-menu></navbar-menu>
+      <div class="navbar-menu"></div>
       <navbar class="layout-container__header--navbar" />
     </div>
     <div class="layout-container__body body-bg">
@@ -31,8 +31,8 @@
           @click="changeCollapse"
         />
 
-        <pub-breadcrumb v-show="isShowBreadcrumb" />
-        <tags-view v-show="isShowTagsView" />
+        <!-- <pub-breadcrumb v-show="isShowBreadcrumb" /> -->
+        <!-- <tags-view v-show="isShowTagsView" /> -->
 
         <div class="layout-container__body__main__center">
           <transition name="fade-transform" mode="out-in">
@@ -49,15 +49,42 @@
   </div>
 </template>
 <script>
+  import { getIsShowMenu } from '@/utils/storage';
+
+  import PubMenu from './menu/menu.vue';
+  import Navbar from './header/navbar.vue';
+  // import TagsView from './tags-view/index.vue';
   export default {
+    name: 'layout',
+    components: {
+      PubMenu,
+      Navbar
+      // TagsView
+    },
     data() {
       return {
-        isProMode: process.env.NODE_ENV === 'production' //是否是发布模式
+        isProMode: process.env.NODE_ENV === 'production', //是否是发布模式
+        isCollapse: getIsShowMenu() !== 'true'
       };
     },
     computed: {
       routePath() {
         return this.$route.path;
+      },
+      isShowBreadcrumb() {
+        return this.$store.getters.isShowBreadcrumb;
+      },
+      isShowTagsView() {
+        return this.$store.getters.isShowTagsView;
+      }
+    },
+    methods: {
+      resize() {
+        this.$EventBus.$emit('visible.window.resize'); //可视区域大小变换
+      },
+      changeCollapse() {
+        this.isCollapse = !this.isCollapse;
+        this.resize();
       }
     }
   };

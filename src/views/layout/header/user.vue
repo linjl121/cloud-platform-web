@@ -1,7 +1,7 @@
 <!--L.Dragon-->
 <template>
   <div>
-    <el-popover v-model="userVisible" placement="top-end" :width="17.5 * fontSize">
+    <el-popover v-model="userVisible" placement="top-end" :width="280">
       <div class="user-content">
         <div class="user-info">
           <div class="user-info--avatar">
@@ -10,20 +10,6 @@
             <span class="text--normal">
               {{ user.name ? user.name : user.account }}
             </span>
-          </div>
-
-          <!-- icon -->
-          <div class="user-info--role">
-            <el-tooltip :content="user.roleName ? user.roleName : '-'" placement="top">
-              <div class="circle">
-                <svg-icon name="shield" class="user-fill" style="width: 1.5rem; height: 1.5rem" />
-              </div>
-            </el-tooltip>
-            <el-tooltip :content="user.areaName ? user.areaName : '-'" placement="top">
-              <div class="circle">
-                <svg-icon name="address" class="user-fill" style="width: 1.5rem; height: 1.5rem" />
-              </div>
-            </el-tooltip>
           </div>
         </div>
         <div class="user-content-item" @click="turnToSetting">
@@ -34,7 +20,7 @@
           <i class="iconfont icon-systemManage"></i>
           {{ $t('navbar.systemSetting') }}
         </div>
-        <div class="user-content-item" :class="user.passwordExpireMsg ? 'text-warn' : ''" @click="showPassWord">
+        <div class="user-content-item" @click="showPassWord">
           <i class="iconfont icon-lock"></i>
           {{ $t('navbar.changePassword') }}
           <el-tooltip
@@ -67,7 +53,7 @@
         </el-tooltip>
       </div>
     </el-popover>
-    <reset-password-form
+    <!-- <reset-password-form
       :visible="isShowResetPwd"
       :loading="passwordLoading"
       :show-old-password="true"
@@ -75,7 +61,7 @@
       :password-length="passwordLength"
       @cancel="cancelChangePassWord"
       @changePassWord="changePassWord"
-    ></reset-password-form>
+    ></reset-password-form> -->
     <el-dialog title="界面设置" :visible.sync="systemDialogVisible" width="25%">
       <el-row>
         <el-col :span="10" class="sys-lable">面包屑</el-col>
@@ -99,15 +85,13 @@
 </template>
 
 <script>
-  import { SysStore } from '@/store/modules/public/system-store';
-  import { updatePassword } from '@/api/common/login';
-  import ResetPasswordForm from '@/views/login/modules/reset-password-form.vue';
-  import { getSysParamertTypeByName } from '@/api/system/user';
-  import { TagsViewStore } from '@/store/modules/public/tags-view';
+  // import { updatePassword } from '@/api/common/login';
+  // import ResetPasswordForm from '@/views/login/modules/reset-password-form.vue';
+  // import { TagsViewStore } from '@/store/modules/public/tags-view';
 
   export default {
     name: 'header-user',
-    components: { ResetPasswordForm },
+    // components: { ResetPasswordForm },
     data() {
       return {
         userVisible: false,
@@ -119,35 +103,35 @@
     },
     computed: {
       user() {
-        return SysStore.userData || '{}';
+        return this.$store.getters.userData;
       },
       isShowTagsView: {
         get() {
-          return SysStore.isShowTagsView;
+          return this.$store.getters.isShowTagsView;
         },
         set(bool) {
-          if (bool) {
-            TagsViewStore.addView(this.$route);
-          } else {
-            TagsViewStore.delAllViews();
-          }
-          SysStore.SET_IS_SHOW_TAGSVIEW(bool);
+          // if (bool) {
+          //   TagsViewStore.addView(this.$route);
+          // } else {
+          //   TagsViewStore.delAllViews();
+          // }
+          this.$store.commit('setIsShowTagsView', bool);
         }
       },
       isShowBreadcrumb: {
         get() {
-          return SysStore.isShowBreadcrumb;
+          return this.$store.getters.isShowBreadcrumb;
         },
         set(bool) {
-          SysStore.SET_IS_SHOW_BREADCRUMB(bool);
+          this.$store.commit('setIsShowBreadcrumb', bool);
         }
       },
       isShowMenu: {
         get() {
-          return SysStore.isShowMenu;
+          return this.$store.getters.isShowMenu;
         },
         set(bool) {
-          SysStore.SET_IS_SHOW_MENU(bool);
+          this.$store.commit('setIsShowMenu', bool);
         }
       }
     },
@@ -157,12 +141,9 @@
         this.$router.push({ path: '/settings' });
       },
       showPassWord() {
-        getSysParamertTypeByName('passwordLenth').then(({ data }) => {
-          this.passwordLength = data.value;
-          this.userVisible = false;
-          this.accountInfo = { account: this.user.account };
-          this.isShowResetPwd = true;
-        });
+        this.userVisible = false;
+        this.accountInfo = { account: this.user.account };
+        this.isShowResetPwd = true;
       },
       turnToSystemSetting() {
         this.systemDialogVisible = true;
@@ -171,26 +152,25 @@
       cancelChangePassWord() {
         this.isShowResetPwd = false;
       },
-      changePassWord(data) {
-        this.passwordLoading = true;
+      // changePassWord(data) {
+      //   this.passwordLoading = true;
 
-        const temp = {
-          username: this.accountInfo.account,
-          password: data.password,
-          newPassword: data.newPassword,
-          checkPassword: data.confirmPassword
-        };
-        updatePassword(temp)
-          .then(() => {
-            this.passwordLoading = false;
-            this.isShowResetPwd = false;
-            this.$message.success('密码修改成功！');
-            SysStore.getUserInfo(); //更新密码过期时间 passwordExpireMsg
-          })
-          .catch(() => {
-            this.passwordLoading = false;
-          });
-      },
+      //   const temp = {
+      //     username: this.accountInfo.account,
+      //     password: data.password,
+      //     newPassword: data.newPassword,
+      //     checkPassword: data.confirmPassword
+      //   };
+      //   updatePassword(temp)
+      //     .then(() => {
+      //       this.passwordLoading = false;
+      //       this.isShowResetPwd = false;
+      //       this.$message.success('密码修改成功！');
+      //     })
+      //     .catch(() => {
+      //       this.passwordLoading = false;
+      //     });
+      // },
       logout() {
         this.userVisible = false;
         this.$EventBus.$emit('login.login-out', 'login');
