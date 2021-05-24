@@ -32,7 +32,7 @@
         />
 
         <!-- <pub-breadcrumb v-show="isShowBreadcrumb" /> -->
-        <!-- <tags-view v-show="isShowTagsView" /> -->
+        <tags-view v-show="isShowTagsView" />
 
         <div class="layout-container__body__main__center">
           <transition name="fade-transform" mode="out-in">
@@ -53,13 +53,13 @@
 
   import PubMenu from './menu/menu.vue';
   import Navbar from './header/navbar.vue';
-  // import TagsView from './tags-view/index.vue';
+  import TagsView from './tags-view/index.vue';
   export default {
     name: 'layout',
     components: {
       PubMenu,
-      Navbar
-      // TagsView
+      Navbar,
+      TagsView
     },
     data() {
       return {
